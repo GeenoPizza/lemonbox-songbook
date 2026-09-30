@@ -3,261 +3,173 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍋 Lemon Box Songbook</title>
+<title>Lemon Box Songbook</title>
 
 <style>
 *{box-sizing:border-box}
 
 body{
-    margin:0;
-    background:#f5f3ee;
-    color:#191919;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  margin:0;
+  background:#f4f1e9;
+  color:#252525;
+  font-family:Arial,Helvetica,sans-serif;
 }
 
 #app{
-    max-width:900px;
-    margin:auto;
-    padding:32px 20px 70px;
+  max-width:900px;
+  margin:auto;
+  padding:28px 18px 50px;
 }
 
 header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:20px;
-    margin-bottom:25px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
 }
 
 .logo{
-    font-size:28px;
-    font-weight:800;
-    letter-spacing:-1px;
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:-1px;
 }
 
 .logo span{
-    color:#999;
-    font-size:15px;
-    font-weight:500;
-    letter-spacing:0;
-}
-
-button{
-    border:1px solid #ddd8cc;
-    background:white;
-    border-radius:999px;
-    padding:10px 16px;
-    font-weight:700;
-    cursor:pointer;
+  color:#d7a900;
 }
 
 .search{
-    margin-bottom:18px;
-}
-
-.search input{
-    width:100%;
-    padding:15px 18px;
-    border:1px solid #ddd8cc;
-    border-radius:14px;
-    background:white;
-    font-size:16px;
-    outline:none;
-}
-
-.songs{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
+  width:100%;
+  padding:16px 18px;
+  border:1px solid #ddd7ca;
+  border-radius:14px;
+  background:white;
+  font-size:16px;
+  outline:none;
+  margin-bottom:18px;
 }
 
 .song{
-    display:grid;
-    grid-template-columns:30px 45px 1fr 30px;
-    align-items:center;
-    min-height:76px;
-    padding:12px 18px;
-    background:white;
-    border:1px solid #e5e1d8;
-    border-radius:17px;
-    box-shadow:0 4px 16px rgba(0,0,0,.05);
-    cursor:pointer;
-    transition:.15s;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  background:white;
+  border:1px solid #e4dfd4;
+  border-radius:16px;
+  padding:16px 18px;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:.15s;
 }
 
 .song:hover{
-    transform:translateY(-2px);
-    box-shadow:0 9px 25px rgba(0,0,0,.09);
-}
-
-.drag{
-    color:#aaa;
-    opacity:0;
-}
-
-.editing .drag{
-    opacity:1;
+  transform:translateY(-1px);
+  box-shadow:0 5px 18px rgba(0,0,0,.07);
 }
 
 .num{
-    color:#aaa;
-    font-size:13px;
-    font-weight:700;
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:#f1df87;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  font-weight:bold;
+  flex-shrink:0;
+}
+
+.info{
+  flex:1;
 }
 
 .title{
-    font-size:17px;
-    font-weight:750;
+  font-size:17px;
+  font-weight:700;
 }
 
 .artist{
-    margin-top:4px;
-    color:#777;
-    font-size:13px;
+  margin-top:4px;
+  color:#777;
+  font-size:14px;
 }
 
 .arrow{
-    color:#aaa;
-    font-size:28px;
-    text-align:right;
-}
-
-.hidden{
-    display:none!important;
+  font-size:22px;
+  color:#aaa;
 }
 
 .reader{
-    display:none;
-}
-
-.reader.active{
-    display:block;
+  display:none;
 }
 
 .back{
-    margin-bottom:25px;
+  border:0;
+  background:none;
+  padding:0;
+  margin-bottom:22px;
+  font-size:15px;
+  cursor:pointer;
+  color:#666;
 }
 
 .reader h1{
-    margin:0;
-    font-size:42px;
-    line-height:1.05;
-    letter-spacing:-1.5px;
+  font-size:34px;
+  margin:0;
+  letter-spacing:-1px;
 }
 
 .reader .artist{
-    font-size:17px;
-    margin:8px 0 25px;
+  font-size:17px;
+  margin:7px 0 25px;
 }
 
-.lyrics-card{
-    background:white;
-    border:1px solid #e5e1d8;
-    border-radius:20px;
-    padding:40px;
-    box-shadow:0 8px 30px rgba(0,0,0,.06);
+.lyrics{
+  background:#fff;
+  border:1px solid #e2ddd2;
+  border-radius:20px;
+  padding:30px;
+  box-shadow:0 5px 25px rgba(0,0,0,.04);
 }
 
-.stanza{
-    margin-bottom:30px;
-}
-
-.line{
-    display:block;
-    font-size:18px;
-    line-height:1.65;
-}
-
-.loading{
-    text-align:center;
-    padding:40px;
-    color:#777;
-}
-
-.error{
-    padding:20px;
-    background:#fff7d6;
-    border-radius:14px;
-}
-
-.error a{
-    display:inline-block;
-    margin-top:12px;
-    padding:10px 15px;
-    background:#f4c542;
-    border-radius:999px;
-    color:#111;
-    text-decoration:none;
-    font-weight:700;
+.lyrics pre{
+  white-space:pre-wrap;
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:17px;
+  line-height:1.65;
+  margin:0;
 }
 
 .nav{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-top:15px;
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:18px;
 }
 
 .nav button{
-    border-radius:13px;
-    text-align:left;
+  flex:1;
+  padding:14px;
+  border:1px solid #ddd6c8;
+  border-radius:12px;
+  background:white;
+  cursor:pointer;
+  font-size:15px;
 }
 
-.nav button:last-child{
-    text-align:right;
+.empty{
+  padding:40px;
+  text-align:center;
+  color:#777;
 }
 
 @media(max-width:600px){
-
-    #app{
-        padding:20px 10px 50px;
-    }
-
-    header{
-        align-items:center;
-    }
-
-    .logo{
-        font-size:22px;
-    }
-
-    .logo span{
-        font-size:13px;
-    }
-
-    .song{
-        grid-template-columns:22px 34px 1fr 25px;
-        min-height:68px;
-        padding:10px 12px;
-    }
-
-    .title{
-        font-size:15px;
-    }
-
-    .artist{
-        font-size:12px;
-    }
-
-    .reader h1{
-        font-size:30px;
-    }
-
-    .lyrics-card{
-        padding:25px 18px;
-    }
-
-    .line{
-        font-size:17px;
-    }
-
-    .nav{
-        grid-template-columns:1fr;
-    }
-
-    .nav button:last-child{
-        text-align:left;
-    }
+  #app{padding:20px 12px 40px}
+  .logo{font-size:24px}
+  .reader h1{font-size:28px}
+  .lyrics{padding:22px}
+  .lyrics pre{font-size:16px}
 }
 </style>
 </head>
@@ -266,291 +178,173 @@ button{
 
 <div id="app">
 
-<header>
-    <div class="logo">
-        🍋 Lemon Box
-        <span>Songbook</span>
-    </div>
+  <header>
+    <div class="logo">🍋 Lemon Box <span>Songbook</span></div>
+  </header>
 
-    <button id="edit">✏️ Ordina</button>
-</header>
+  <section id="listView">
+    <input
+      id="search"
+      class="search"
+      type="search"
+      placeholder="Cerca una canzone..."
+    >
 
-<div class="search">
-    <input id="search" type="search"
-           placeholder="Cerca una canzone o un artista…">
-</div>
+    <div id="songList"></div>
+  </section>
 
-<div id="list" class="songs"></div>
-
-<div id="reader" class="reader">
-
-    <button class="back" id="back">← Setlist</button>
+  <section id="reader" class="reader">
+    <button class="back" onclick="showList()">← Tutte le canzoni</button>
 
     <h1 id="readerTitle"></h1>
     <div id="readerArtist" class="artist"></div>
 
-    <div class="lyrics-card">
-        <div id="lyrics">
-            <div class="loading">Caricamento…</div>
-        </div>
+    <div class="lyrics">
+      <pre id="lyricsText">Caricamento...</pre>
     </div>
 
     <div class="nav">
-        <button id="prev">← Precedente</button>
-        <button id="next">Successiva →</button>
+      <button onclick="previousSong()">← Precedente</button>
+      <button onclick="nextSong()">Successiva →</button>
     </div>
-
-</div>
+  </section>
 
 </div>
 
 <script>
+let SONGS = [];
+let currentIndex = 0;
 
-const SONGS=[
+const listView = document.getElementById("listView");
+const reader = document.getElementById("reader");
+const songList = document.getElementById("songList");
+const search = document.getElementById("search");
 
-["All Star","Smash Mouth","all-star-smash-mouth/"],
-["Say You'll Be There","Spice Girls","say-you-ll-be-there-spice-girls/"],
-["Kiss Me","Sixpence None The Richer","kiss-me-sixpence-none-the-richer/"],
-["Torn","Natalie Imbruglia","torn-natalie-imbruglia/"],
-["Lovefool","The Cardigans","lovefool-the-cardigans/"],
-["No Scrubs","TLC","no-scrubs-tlc/"],
-["Let Me Love You","Mario","let-me-love-you-mario/"],
-["Complicated","Avril Lavigne","complicated-avril-lavigne/"],
-["As Long As You Love Me","Backstreet Boys","as-long-as-you-love-me-backstreet-boys/"],
-["Fallin'","Alicia Keys","fallin-alicia-keys/"],
-["You Get What You Give","New Radicals","you-get-what-you-give-new-radicals/"],
-["She Will Be Loved","Maroon 5","she-will-be-loved-maroon-5/"],
-["Iris","Goo Goo Dolls","iris-goo-goo-dolls/"],
-["Ironic","Alanis Morissette","ironic-alanis-morissette/"],
-["Bad Day","Daniel Powter","bad-day-daniel-powter/"],
-["Cry Me a River","Justin Timberlake","cry-me-a-river-justin-timberlake/"],
-["You Oughta Know","Alanis Morissette","you-oughta-know-alanis-morissette/"],
-["Time of Your Life","Green Day","time-of-your-life-green-day/"],
-["Don't Speak","No Doubt","don-t-speak-no-doubt/"],
-["Unwritten","Natasha Bedingfield","unwritten-natasha-bedingfield/"],
-["Lemon Tree","Fools Garden","lemon-tree-fools-garden/"],
-["Sitcom Medley","","sitcom-medley/"],
-["Get This Party Started","P!nk","get-this-party-started-p-nk/"],
-["Sk8er Boi","Avril Lavigne","sk8er-boi-avril-lavigne/"],
-["Wonderwall","Oasis","wonderwall-oasis/"],
-["This Love","Maroon 5","this-love-maroon-5/"],
-["Lose Yourself","Eminem","lose-yourself-eminem/"],
-["All the Small Things","Blink 182","all-the-small-things-blink-182/"],
-["Baby One More Time","Britney Spears","baby-one-more-time-britney-spears/"],
-["Mmmbop","Hanson","mmmbop-hanson/"],
-["I Want It That Way","Backstreet Boys","i-want-it-that-way-backstreet-boys/"],
-["Wannabe","Spice Girls","wannabe-spice-girls/"]
+async function loadSongs(){
 
-].map((x,i)=>({
-    id:String(i),
-    title:x[0],
-    artist:x[1],
-    url:new URL(x[2],location.origin).href
-}));
+  try{
 
-const KEY="lemonbox-order";
+    const response = await fetch("songs.json");
 
-let songs=[...SONGS];
-let current=-1;
-let editing=false;
-
-const list=document.getElementById("list");
-const search=document.getElementById("search");
-
-function escape(s){
-    return String(s).replace(/[&<>"']/g,m=>({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#039;"
-    }[m]));
-}
-
-function render(){
-
-    const q=search.value.toLowerCase().trim();
-
-    list.innerHTML="";
-
-    songs
-    .filter(s=>
-        (s.title+" "+s.artist)
-        .toLowerCase()
-        .includes(q)
-    )
-    .forEach((s,i)=>{
-
-        const el=document.createElement("div");
-
-        el.className="song";
-
-        el.innerHTML=`
-            <span class="drag">☰</span>
-            <span class="num">
-                ${String(i+1).padStart(2,"0")}
-            </span>
-            <div>
-                <div class="title">${escape(s.title)}</div>
-                <div class="artist">${escape(s.artist)}</div>
-            </div>
-            <span class="arrow">›</span>
-        `;
-
-        el.onclick=()=>{
-            if(!editing) openSong(i);
-        };
-
-        list.appendChild(el);
-
-    });
-}
-
-async function openSong(i){
-
-    current=i;
-
-    const s=songs[i];
-
-    list.classList.add("hidden");
-    search.parentElement.classList.add("hidden");
-    document.getElementById("edit").classList.add("hidden");
-
-    const reader=document.getElementById("reader");
-
-    reader.classList.add("active");
-
-    document.getElementById("readerTitle").textContent=s.title;
-    document.getElementById("readerArtist").textContent=s.artist;
-
-    document.getElementById("lyrics").innerHTML=
-        '<div class="loading">Caricamento del testo…</div>';
-
-    try{
-
-        const response=await fetch(s.url);
-
-        if(!response.ok)
-            throw new Error();
-
-        const html=await response.text();
-
-        const doc=new DOMParser()
-            .parseFromString(html,"text/html");
-
-        const text=doc.body.innerText||"";
-
-        const lines=text.split("\n")
-            .map(x=>x.trim())
-            .filter(Boolean);
-
-        let start=lines.findIndex(x=>
-            x.toLowerCase()===s.title.toLowerCase()
-        );
-
-        if(start<0) start=0;
-
-        let result=lines.slice(start+1);
-
-        result=result.filter(x=>
-            !/next song|back to home|privacy|informazioni legali/i.test(x)
-        );
-
-        renderLyrics(result);
-
-    }catch(e){
-
-        document.getElementById("lyrics").innerHTML=`
-            <div class="error">
-                <strong>Testo non disponibile qui.</strong>
-                <br>
-                Apri la pagina originale:
-                <br>
-                <a href="${s.url}" target="_blank">
-                    Apri ${escape(s.title)} ↗
-                </a>
-            </div>
-        `;
-
+    if(!response.ok){
+      throw new Error("songs.json non disponibile");
     }
 
-    updateNav();
+    SONGS = await response.json();
 
-    window.scrollTo(0,0);
+    renderSongs(SONGS);
+
+  }catch(error){
+
+    songList.innerHTML = `
+      <div class="empty">
+        Impossibile caricare il Songbook.
+      </div>
+    `;
+
+    console.error(error);
+  }
 }
 
-function renderLyrics(lines){
+function renderSongs(songs){
 
-    const container=document.getElementById("lyrics");
+  songList.innerHTML = "";
 
-    container.innerHTML="";
+  if(!songs.length){
+    songList.innerHTML = `
+      <div class="empty">
+        Nessuna canzone trovata.
+      </div>
+    `;
+    return;
+  }
 
-    let stanza=document.createElement("div");
+  songs.forEach((song, index)=>{
 
-    stanza.className="stanza";
+    const realIndex = SONGS.indexOf(song);
 
-    lines.forEach(line=>{
+    const el = document.createElement("div");
+    el.className = "song";
 
-        const span=document.createElement("span");
+    el.innerHTML = `
+      <div class="num">${String(realIndex+1).padStart(2,"0")}</div>
 
-        span.className="line";
+      <div class="info">
+        <div class="title">${escapeHTML(song.title)}</div>
+        <div class="artist">${escapeHTML(song.artist || "")}</div>
+      </div>
 
-        span.textContent=line;
+      <div class="arrow">›</div>
+    `;
 
-        stanza.appendChild(span);
+    el.onclick = ()=>openSong(realIndex);
 
-    });
-
-    container.appendChild(stanza);
+    songList.appendChild(el);
+  });
 }
 
-function updateNav(){
+function openSong(index){
 
-    document.getElementById("prev").disabled=current<=0;
+  currentIndex = index;
 
-    document.getElementById("next").disabled=
-        current>=songs.length-1;
+  const song = SONGS[index];
+
+  document.getElementById("readerTitle").textContent = song.title;
+  document.getElementById("readerArtist").textContent = song.artist || "";
+  document.getElementById("lyricsText").textContent =
+    song.text || "Testo non disponibile.";
+
+  listView.style.display = "none";
+  reader.style.display = "block";
+
+  window.scrollTo(0,0);
 }
 
-document.getElementById("back").onclick=()=>{
+function showList(){
 
-    document.getElementById("reader")
-        .classList.remove("active");
+  reader.style.display = "none";
+  listView.style.display = "block";
 
-    list.classList.remove("hidden");
+  window.scrollTo(0,0);
+}
 
-    search.parentElement
-        .classList.remove("hidden");
+function nextSong(){
 
-    document.getElementById("edit")
-        .classList.remove("hidden");
+  if(currentIndex < SONGS.length - 1){
+    openSong(currentIndex + 1);
+  }
+}
 
-};
+function previousSong(){
 
-document.getElementById("prev").onclick=()=>{
-    if(current>0) openSong(current-1);
-};
+  if(currentIndex > 0){
+    openSong(currentIndex - 1);
+  }
+}
 
-document.getElementById("next").onclick=()=>{
-    if(current<songs.length-1) openSong(current+1);
-};
+search.addEventListener("input", ()=>{
 
-document.getElementById("edit").onclick=()=>{
+  const q = search.value.toLowerCase().trim();
 
-    editing=!editing;
+  renderSongs(
+    SONGS.filter(song =>
+      song.title.toLowerCase().includes(q) ||
+      (song.artist || "").toLowerCase().includes(q)
+    )
+  );
+});
 
-    document.body.classList.toggle("editing",editing);
+function escapeHTML(str){
 
-    document.getElementById("edit").textContent=
-        editing ? "✓ Fine" : "✏️ Ordina";
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
 
-    render();
-};
-
-search.oninput=render;
-
-render();
-
+loadSongs();
 </script>
 
 </body>
