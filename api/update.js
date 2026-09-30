@@ -14,20 +14,53 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { password, songs } = req.body || {};
+    const { action, password, songs } = req.body || {};
 
-    if (!password || password !== process.env.SONGBOOK_ADMIN_PASSWORD) {
-      return res.status(401).json({ error: "Password non valida" });
+    // Verifica password
+    if (action === "login") {
+      if (
+        password &&
+        password === process.env.SONGBOOK_ADMIN_PASSWORD
+      ) {
+        return res.status(200).json({
+          success: true
+        });
+      }
+
+      return res.status(401).json({
+        success: false,
+        error: "Password non valida"
+      });
+    }
+
+    // Salvataggio
+    if (action !== "save") {
+      return res.status(400).json({
+        error: "Azione non valida"
+      });
+    }
+
+    if (
+      !password ||
+      password !== process.env.SONGBOOK_ADMIN_PASSWORD
+    ) {
+      return res.status(401).json({
+        error: "Password non valida"
+      });
     }
 
     if (!Array.isArray(songs)) {
-      return res.status(400).json({ error: "Dati non validi" });
+      return res.status(400).json({
+        error: "Dati non validi"
+      });
     }
 
     const token = process.env.SONGBOOK_GITHUB_TOKEN;
 
     if (!token) {
-      return res.status(500).json({ error: "Token GitHub mancante" });
+      return res.status(500).json({
+        error: "Token GitHub mancante"
+      });
     }
 
     const owner = "GeenoPizza";
@@ -48,6 +81,7 @@ export default async function handler(req, res) {
 
     if (!fileResponse.ok) {
       const errorText = await fileResponse.text();
+
       return res.status(500).json({
         error: "Impossibile leggere songs.json",
         details: errorText
@@ -87,6 +121,7 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
+
     return res.status(500).json({
       error: "Errore interno",
       details: error.message
