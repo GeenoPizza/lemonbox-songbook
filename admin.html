@@ -41,6 +41,40 @@
       padding: 24px;
     }
 
+    input {
+      width: 100%;
+      max-width: 400px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      background: #222;
+      color: white;
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .login-button {
+      background: #5de0bb;
+      color: #111;
+    }
+
+    .error {
+      color: #e58b8b;
+      margin-top: 15px;
+    }
+
+    #adminArea {
+      display: none;
+    }
+
     .song {
       display: flex;
       align-items: center;
@@ -75,14 +109,6 @@
     .status.hidden {
       background: #3b2525;
       color: #e58b8b;
-    }
-
-    button {
-      border: 0;
-      border-radius: 8px;
-      padding: 9px 14px;
-      cursor: pointer;
-      font-weight: bold;
     }
 
     .toggle {
@@ -120,83 +146,139 @@
 
     <div class="panel">
 
-      <div id="songList">
-        <div class="empty">
-          Caricamento...
-        </div>
+      <div id="loginArea">
+
+        <input
+          id="password"
+          type="password"
+          placeholder="Password admin"
+        >
+
+        <br>
+
+        <button
+          class="login-button"
+          onclick="login()"
+        >
+          Accedi
+        </button>
+
+        <div id="loginError" class="error"></div>
+
       </div>
 
-      <div id="message"></div>
+
+      <div id="adminArea">
+
+        <div id="songList">
+          <div class="empty">
+            Caricamento...
+          </div>
+        </div>
+
+        <div id="message"></div>
+
+      </div>
 
     </div>
 
   </div>
 
+
   <script>
+
     const SONGS_URL =
       "https://raw.githubusercontent.com/GeenoPizza/lemonbox-songbook/main/songs.json";
 
-    async function loadSongs() {
-      const container = document.getElementById("songList");
+    const API_URL =
+      "https://lemonbox-songbook.vercel.app/api/update";
+
+    let password = "";
+    let songs = [];
+
+
+    async function login() {
+
+      const input =
+        document.getElementById("password");
+
+      const error =
+        document.getElementById("loginError");
+
+      password = input.value;
+
+      error.textContent = "";
+
+      if (!password) {
+        error.textContent = "Inserisci la password.";
+        return;
+      }
 
       try {
-        const response = await fetch(SONGS_URL);
+
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            action: "login",
+            password: password
+          })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(
+            data.error || "Password non valida."
+          );
+        }
+
+        document.getElementById("loginArea").style.display =
+          "none";
+
+        document.getElementById("adminArea").style.display =
+          "block";
+
+        loadSongs();
+
+      } catch (error) {
+
+        error = String(error.message || error);
+
+        document.getElementById("loginError").textContent =
+          error;
+
+      }
+
+    }
+
+
+    async function loadSongs() {
+
+      const container =
+        document.getElementById("songList");
+
+      try {
+
+        const response =
+          await fetch(
+            SONGS_URL + "?t=" + Date.now(),
+            {
+              cache: "no-store"
+            }
+          );
 
         if (!response.ok) {
-          throw new Error("HTTP " + response.status);
+          throw new Error(
+            "HTTP " + response.status
+          );
         }
 
-        const songs = await response.json();
+        songs = await response.json();
 
-        if (!Array.isArray(songs) || songs.length === 0) {
-          container.innerHTML =
-            '<div class="empty">Nessuna canzone trovata.</div>';
-          return;
-        }
-
-        container.innerHTML = "";
-
-        songs.forEach(function(song) {
-
-          const row = document.createElement("div");
-          row.className = "song";
-
-          const handle = document.createElement("div");
-          handle.className = "handle";
-          handle.textContent = "☰";
-
-          const title = document.createElement("div");
-          title.className = "song-title";
-          title.textContent =
-            song.title || "Senza titolo";
-
-          const status = document.createElement("div");
-          status.className = "status";
-
-          if (song.visible === false) {
-            status.className = "status hidden";
-            status.textContent = "Nascosta";
-          } else {
-            status.textContent = "Visibile";
-          }
-
-          const toggle = document.createElement("button");
-          toggle.className = "toggle";
-          toggle.textContent =
-            song.visible === false ? "Mostra" : "Nascondi";
-
-          const deleteButton = document.createElement("button");
-          deleteButton.className = "delete";
-          deleteButton.textContent = "Elimina";
-
-          row.appendChild(handle);
-          row.appendChild(title);
-          row.appendChild(status);
-          row.appendChild(toggle);
-          row.appendChild(deleteButton);
-
-          container.appendChild(row);
-        });
+        renderSongs();
 
       } catch (error) {
 
@@ -207,9 +289,109 @@
           '</div>';
 
       }
+
     }
 
-    loadSongs();
+
+    function renderSongs() {
+
+      const container =
+        document.getElementById("songList");
+
+      container.innerHTML = "";
+
+      songs.forEach(function(song, index) {
+
+        const row =
+          document.createElement("div");
+
+        row.className = "song";
+
+        const handle =
+          document.createElement("div");
+
+        handle.className = "handle";
+        handle.textContent = "☰";
+
+        const title =
+          document.createElement("div");
+
+        title.className = "song-title";
+        title.textContent =
+          song.title || "Senza titolo";
+
+        const status =
+          document.createElement("div");
+
+        if (song.visible === false) {
+
+          status.className = "status hidden";
+          status.textContent = "Nascosta";
+
+        } else {
+
+          status.className = "status";
+          status.textContent = "Visibile";
+
+        }
+
+        const toggle =
+          document.createElement("button");
+
+        toggle.className = "toggle";
+
+        toggle.textContent =
+          song.visible === false
+            ? "Mostra"
+            : "Nascondi";
+
+        toggle.onclick = function() {
+
+          song.visible =
+            song.visible === false;
+
+          renderSongs();
+
+        };
+
+
+        const deleteButton =
+          document.createElement("button");
+
+        deleteButton.className = "delete";
+        deleteButton.textContent = "Elimina";
+
+        deleteButton.onclick = function() {
+
+          if (
+            !confirm(
+              'Eliminare "' +
+              (song.title || "questa canzone") +
+              '"?'
+            )
+          ) {
+            return;
+          }
+
+          songs.splice(index, 1);
+
+          renderSongs();
+
+        };
+
+
+        row.appendChild(handle);
+        row.appendChild(title);
+        row.appendChild(status);
+        row.appendChild(toggle);
+        row.appendChild(deleteButton);
+
+        container.appendChild(row);
+
+      });
+
+    }
+
   </script>
 
 </body>
