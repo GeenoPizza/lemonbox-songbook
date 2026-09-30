@@ -387,7 +387,9 @@ async function loadSongs(){
 
   try{
 
-    const response = await fetch("songs.json?t=" + Date.now());
+    const response = await fetch(
+  "https://raw.githubusercontent.com/GeenoPizza/lemonbox-songbook/main/songs.json?t=" + Date.now()
+);
 
     if(!response.ok){
       throw new Error("songs.json non disponibile");
