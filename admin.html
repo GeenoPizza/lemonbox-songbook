@@ -11,362 +11,976 @@
       box-sizing: border-box;
     }
 
+    :root {
+      --bg: #101010;
+      --panel: #1a1a1a;
+      --panel2: #222;
+      --border: #303030;
+      --text: #eee;
+      --muted: #888;
+      --green: #5de0bb;
+      --green-dark: #163b32;
+      --red: #ff8d8d;
+      --red-dark: #452525;
+      --yellow: #e8c96b;
+    }
+
     body {
       margin: 0;
-      background: #111;
-      color: #eee;
+      background: var(--bg);
+      color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
     }
 
     .container {
       max-width: 1100px;
       margin: 0 auto;
-      padding: 40px 24px 80px;
+      padding: 35px 20px 80px;
     }
 
     h1 {
-      margin: 0 0 8px;
+      margin: 0 0 5px;
       font-size: 32px;
     }
 
     .subtitle {
-      color: #888;
-      margin-bottom: 35px;
+      color: var(--muted);
+      margin-bottom: 30px;
     }
 
     .panel {
-      background: #1b1b1b;
-      border: 1px solid #292929;
+      background: var(--panel);
+      border: 1px solid var(--border);
       border-radius: 14px;
       padding: 24px;
     }
 
-    input {
-      width: 100%;
-      max-width: 400px;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid #444;
-      background: #222;
-      color: white;
-      font-size: 16px;
-      margin-bottom: 12px;
+    /* LOGIN */
+
+    #loginArea {
+      max-width: 500px;
+      margin: 50px auto;
     }
 
-    button {
+    #loginArea h2 {
+      margin-top: 0;
+    }
+
+    .login-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      background: #111;
+      color: var(--text);
+      border: 1px solid #444;
+      border-radius: 8px;
+      padding: 11px 12px;
+      outline: none;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--green);
+    }
+
+    textarea {
+      min-height: 260px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .button {
       border: 0;
       border-radius: 8px;
-      padding: 10px 16px;
-      cursor: pointer;
+      padding: 10px 15px;
       font-weight: bold;
     }
 
-    .login-button {
-      background: #5de0bb;
+    .primary {
+      background: var(--green);
       color: #111;
     }
 
-    .error {
-      color: #e58b8b;
-      margin-top: 15px;
+    .secondary {
+      background: #333;
+      color: white;
     }
+
+    .danger {
+      background: var(--red-dark);
+      color: var(--red);
+    }
+
+    .login-error {
+      color: var(--red);
+      margin-top: 12px;
+    }
+
+    /* ADMIN */
 
     #adminArea {
       display: none;
     }
 
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-left {
+      color: var(--muted);
+    }
+
+    .toolbar-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .song-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
     .song {
       display: flex;
       align-items: center;
-      gap: 15px;
-      padding: 15px;
-      margin-bottom: 8px;
-      background: #242424;
+      gap: 12px;
+      padding: 13px;
+      background: var(--panel2);
+      border: 1px solid transparent;
       border-radius: 10px;
+      transition: opacity 0.15s, border-color 0.15s;
+    }
+
+    .song.dragging {
+      opacity: 0.35;
+      border-color: var(--green);
+    }
+
+    .song.drag-over {
+      border-color: var(--green);
     }
 
     .handle {
+      width: 28px;
+      flex: 0 0 28px;
       color: #777;
-      font-size: 20px;
-      width: 25px;
+      font-size: 21px;
       text-align: center;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .handle:active {
+      cursor: grabbing;
+    }
+
+    .song-number {
+      width: 32px;
+      flex: 0 0 32px;
+      color: #666;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .song-info {
+      flex: 1;
+      min-width: 0;
     }
 
     .song-title {
-      flex: 1;
-      font-size: 17px;
       font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .song-artist {
+      color: var(--muted);
+      font-size: 13px;
     }
 
     .status {
-      font-size: 12px;
+      flex: 0 0 auto;
+      font-size: 11px;
       padding: 5px 9px;
       border-radius: 20px;
-      background: #163b32;
-      color: #5de0bb;
+      background: var(--green-dark);
+      color: var(--green);
     }
 
     .status.hidden {
-      background: #3b2525;
-      color: #e58b8b;
+      background: var(--red-dark);
+      color: var(--red);
     }
 
-    .toggle {
-      background: #333;
-      color: white;
+    .song-buttons {
+      display: flex;
+      gap: 6px;
+      flex: 0 0 auto;
     }
 
-    .delete {
-      background: #4a2424;
-      color: #ffb0b0;
+    .small-button {
+      border: 0;
+      border-radius: 7px;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* EDITOR */
+
+    .editor {
+      display: none;
+      margin-top: 20px;
+      padding: 20px;
+      background: #151515;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .editor.active {
+      display: block;
+    }
+
+    .editor h2 {
+      margin: 0 0 20px;
+      font-size: 21px;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      color: #aaa;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .editor-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    /* MESSAGE */
+
+    #message {
+      margin-top: 18px;
+      min-height: 20px;
+      color: var(--muted);
+    }
+
+    #message.success {
+      color: var(--green);
+    }
+
+    #message.error {
+      color: var(--red);
     }
 
     .empty {
-      color: #777;
-      padding: 30px 0;
+      padding: 40px;
       text-align: center;
+      color: var(--muted);
     }
 
-    #message {
-      margin-top: 20px;
-      color: #aaa;
+    /* MOBILE */
+
+    @media (max-width: 700px) {
+
+      .container {
+        padding: 25px 12px 60px;
+      }
+
+      .panel {
+        padding: 15px;
+      }
+
+      .song {
+        flex-wrap: wrap;
+      }
+
+      .song-info {
+        width: calc(100% - 70px);
+      }
+
+      .status {
+        margin-left: 40px;
+      }
+
+      .song-buttons {
+        margin-left: 40px;
+      }
+
+      .login-row {
+        flex-direction: column;
+      }
+
+      .toolbar-buttons {
+        width: 100%;
+      }
+
+      .toolbar-buttons button {
+        flex: 1;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
+<div class="container">
 
-    <h1>🍋 Lemon Box · Admin</h1>
+  <h1>🍋 Lemon Box · Admin</h1>
 
-    <div class="subtitle">
-      Gestione del Songbook
-    </div>
-
-    <div class="panel">
-
-      <div id="loginArea">
-
-        <input
-          id="password"
-          type="password"
-          placeholder="Password admin"
-        >
-
-        <br>
-
-        <button
-          class="login-button"
-          onclick="login()"
-        >
-          Accedi
-        </button>
-
-        <div id="loginError" class="error"></div>
-
-      </div>
+  <div class="subtitle">
+    Gestione del Songbook
+  </div>
 
 
-      <div id="adminArea">
+  <!-- LOGIN -->
 
-        <div id="songList">
-          <div class="empty">
-            Caricamento...
-          </div>
-        </div>
+  <div id="loginArea" class="panel">
 
-        <div id="message"></div>
+    <h2>Accesso</h2>
 
-      </div>
+    <div class="login-row">
+
+      <input
+        id="password"
+        type="password"
+        placeholder="Password admin"
+        autocomplete="current-password"
+      >
+
+      <button
+        class="button primary"
+        onclick="login()"
+      >
+        Accedi
+      </button>
 
     </div>
+
+    <div
+      id="loginError"
+      class="login-error"
+    ></div>
 
   </div>
 
 
-  <script>
+  <!-- ADMIN -->
 
-    const SONGS_URL =
-      "https://raw.githubusercontent.com/GeenoPizza/lemonbox-songbook/main/songs.json";
+  <div id="adminArea" class="panel">
 
-    const API_URL =
-      "https://lemonbox-songbook.vercel.app/api/update";
+    <div class="toolbar">
 
-    let password = "";
-    let songs = [];
+      <div class="toolbar-left">
+        <strong id="songCount">0</strong>
+        brani
+      </div>
+
+      <div class="toolbar-buttons">
+
+        <button
+          class="button secondary"
+          onclick="newSong()"
+        >
+          + Nuovo brano
+        </button>
+
+        <button
+          class="button primary"
+          onclick="saveSongs()"
+        >
+          Salva modifiche
+        </button>
+
+      </div>
+
+    </div>
 
 
-    async function login() {
+    <div id="songList" class="song-list">
+    </div>
 
-      const input =
-        document.getElementById("password");
 
-      const error =
-        document.getElementById("loginError");
+    <!-- EDITOR -->
 
-      password = input.value;
+    <div id="editor" class="editor">
 
-      error.textContent = "";
+      <h2 id="editorTitle">
+        Modifica brano
+      </h2>
 
-      if (!password) {
-        error.textContent = "Inserisci la password.";
-        return;
-      }
+      <div class="field">
 
-      try {
+        <label for="editTitle">
+          Titolo
+        </label>
 
-        const response = await fetch(API_URL, {
+        <input
+          id="editTitle"
+          type="text"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="editArtist">
+          Artista
+        </label>
+
+        <input
+          id="editArtist"
+          type="text"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="editUrl">
+          URL della pagina
+        </label>
+
+        <input
+          id="editUrl"
+          type="url"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="editText">
+          Testo
+        </label>
+
+        <textarea
+          id="editText"
+        ></textarea>
+
+      </div>
+
+
+      <div class="editor-buttons">
+
+        <button
+          class="button primary"
+          onclick="applyEditor()"
+        >
+          Applica
+        </button>
+
+        <button
+          class="button secondary"
+          onclick="closeEditor()"
+        >
+          Annulla
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div id="message"></div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  const SONGS_URL =
+    "https://raw.githubusercontent.com/GeenoPizza/lemonbox-songbook/main/songs.json";
+
+  const API_URL =
+    "https://lemonbox-songbook.vercel.app/api/update";
+
+
+  let password = "";
+
+  let songs = [];
+
+  let editingIndex = null;
+
+  let draggedIndex = null;
+
+
+  /* =========================
+     LOGIN
+     ========================= */
+
+  async function login() {
+
+    const input =
+      document.getElementById("password");
+
+    const error =
+      document.getElementById("loginError");
+
+    const value =
+      input.value.trim();
+
+    error.textContent = "";
+
+    if (!value) {
+      error.textContent =
+        "Inserisci la password.";
+      return;
+    }
+
+    try {
+
+      const response =
+        await fetch(API_URL, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({
             action: "login",
-            password: password
+            password: value
           })
         });
 
-        const data = await response.json();
+      const data =
+        await response.json();
 
-        if (!data.success) {
-          throw new Error(
-            data.error || "Password non valida."
-          );
-        }
+      if (!response.ok || !data.success) {
 
-        document.getElementById("loginArea").style.display =
-          "none";
-
-        document.getElementById("adminArea").style.display =
-          "block";
-
-        loadSongs();
-
-      } catch (error) {
-
-        error = String(error.message || error);
-
-        document.getElementById("loginError").textContent =
-          error;
+        throw new Error(
+          data.error ||
+          "Password non valida."
+        );
 
       }
+
+      password = value;
+
+      document.getElementById("loginArea")
+        .style.display = "none";
+
+      document.getElementById("adminArea")
+        .style.display = "block";
+
+      await loadSongs();
+
+    } catch (error) {
+
+      error.textContent =
+        error.message ||
+        "Errore di accesso.";
+
+      document.getElementById("loginError")
+        .textContent =
+        error.message ||
+        "Errore di accesso.";
+
+    }
+
+  }
+
+
+  /* =========================
+     LOAD
+     ========================= */
+
+  async function loadSongs() {
+
+    const list =
+      document.getElementById("songList");
+
+    list.innerHTML =
+      '<div class="empty">Caricamento...</div>';
+
+    try {
+
+      const response =
+        await fetch(
+          SONGS_URL + "?t=" + Date.now(),
+          {
+            cache: "no-store"
+          }
+        );
+
+      if (!response.ok) {
+        throw new Error(
+          "HTTP " + response.status
+        );
+      }
+
+      const data =
+        await response.json();
+
+      if (!Array.isArray(data)) {
+        throw new Error(
+          "songs.json non contiene un elenco valido."
+        );
+      }
+
+      songs = data;
+
+      renderSongs();
+
+    } catch (error) {
+
+      list.innerHTML =
+        '<div class="empty">' +
+        'Errore: ' +
+        escapeHtml(error.message) +
+        '</div>';
+
+    }
+
+  }
+
+
+  /* =========================
+     RENDER
+     ========================= */
+
+  function renderSongs() {
+
+    const list =
+      document.getElementById("songList");
+
+    document.getElementById("songCount")
+      .textContent = songs.length;
+
+    list.innerHTML = "";
+
+    if (songs.length === 0) {
+
+      list.innerHTML =
+        '<div class="empty">' +
+        'Nessun brano.' +
+        '</div>';
+
+      return;
 
     }
 
 
-    async function loadSongs() {
+    songs.forEach(function(song, index) {
 
-      const container =
-        document.getElementById("songList");
+      const row =
+        document.createElement("div");
 
-      try {
+      row.className = "song";
 
-        const response =
-          await fetch(
-            SONGS_URL + "?t=" + Date.now(),
-            {
-              cache: "no-store"
-            }
+      row.dataset.index = index;
+
+      row.draggable = true;
+
+
+      /* DRAG START */
+
+      row.addEventListener(
+        "dragstart",
+        function(event) {
+
+          draggedIndex = index;
+
+          row.classList.add("dragging");
+
+          event.dataTransfer.effectAllowed =
+            "move";
+
+          event.dataTransfer.setData(
+            "text/plain",
+            String(index)
           );
 
-        if (!response.ok) {
-          throw new Error(
-            "HTTP " + response.status
-          );
         }
+      );
 
-        songs = await response.json();
 
-        renderSongs();
+      /* DRAG END */
 
-      } catch (error) {
+      row.addEventListener(
+        "dragend",
+        function() {
 
-        container.innerHTML =
-          '<div class="empty">' +
-          'Errore nel caricamento: ' +
-          error.message +
-          '</div>';
+          draggedIndex = null;
+
+          document
+            .querySelectorAll(".song")
+            .forEach(function(item) {
+
+              item.classList.remove(
+                "dragging",
+                "drag-over"
+              );
+
+            });
+
+        }
+      );
+
+
+      /* DRAG OVER */
+
+      row.addEventListener(
+        "dragover",
+        function(event) {
+
+          event.preventDefault();
+
+          if (
+            draggedIndex === null ||
+            draggedIndex === index
+          ) {
+            return;
+          }
+
+          document
+            .querySelectorAll(".song")
+            .forEach(function(item) {
+              item.classList.remove(
+                "drag-over"
+              );
+            });
+
+          row.classList.add("drag-over");
+
+          event.dataTransfer.dropEffect =
+            "move";
+
+        }
+      );
+
+
+      /* DROP */
+
+      row.addEventListener(
+        "drop",
+        function(event) {
+
+          event.preventDefault();
+
+          const from =
+            draggedIndex;
+
+          const to =
+            index;
+
+          if (
+            from === null ||
+            from === to
+          ) {
+            return;
+          }
+
+          const moved =
+            songs.splice(from, 1)[0];
+
+          songs.splice(to, 0, moved);
+
+          draggedIndex = null;
+
+          renderSongs();
+
+          setMessage(
+            "Ordine modificato. Premi «Salva modifiche» per renderlo definitivo."
+          );
+
+        }
+      );
+
+
+      /* HANDLE */
+
+      const handle =
+        document.createElement("div");
+
+      handle.className = "handle";
+
+      handle.textContent = "☰";
+
+      handle.title =
+        "Trascina per riordinare";
+
+
+      /* NUMBER */
+
+      const number =
+        document.createElement("div");
+
+      number.className =
+        "song-number";
+
+      number.textContent =
+        index + 1;
+
+
+      /* INFO */
+
+      const info =
+        document.createElement("div");
+
+      info.className =
+        "song-info";
+
+
+      const title =
+        document.createElement("div");
+
+      title.className =
+        "song-title";
+
+      title.textContent =
+        song.title || "Senza titolo";
+
+
+      const artist =
+        document.createElement("div");
+
+      artist.className =
+        "song-artist";
+
+      artist.textContent =
+        song.artist || "Artista sconosciuto";
+
+
+      info.appendChild(title);
+      info.appendChild(artist);
+
+
+      /* STATUS */
+
+      const status =
+        document.createElement("div");
+
+      if (song.visible === false) {
+
+        status.className =
+          "status hidden";
+
+        status.textContent =
+          "Nascosta";
+
+      } else {
+
+        status.className =
+          "status";
+
+        status.textContent =
+          "Visibile";
 
       }
 
-    }
+
+      /* BUTTONS */
+
+      const buttons =
+        document.createElement("div");
+
+      buttons.className =
+        "song-buttons";
 
 
-    function renderSongs() {
+      const toggle =
+        document.createElement("button");
 
-      const container =
-        document.getElementById("songList");
+      toggle.className =
+        "small-button secondary";
 
-      container.innerHTML = "";
+      toggle.textContent =
+        song.visible === false
+          ? "Mostra"
+          : "Nascondi";
 
-      songs.forEach(function(song, index) {
 
-        const row =
-          document.createElement("div");
-
-        row.className = "song";
-
-        const handle =
-          document.createElement("div");
-
-        handle.className = "handle";
-        handle.textContent = "☰";
-
-        const title =
-          document.createElement("div");
-
-        title.className = "song-title";
-        title.textContent =
-          song.title || "Senza titolo";
-
-        const status =
-          document.createElement("div");
-
-        if (song.visible === false) {
-
-          status.className = "status hidden";
-          status.textContent = "Nascosta";
-
-        } else {
-
-          status.className = "status";
-          status.textContent = "Visibile";
-
-        }
-
-        const toggle =
-          document.createElement("button");
-
-        toggle.className = "toggle";
-
-        toggle.textContent =
-          song.visible === false
-            ? "Mostra"
-            : "Nascondi";
-
-        toggle.onclick = function() {
+      toggle.onclick =
+        function() {
 
           song.visible =
             song.visible === false;
 
           renderSongs();
 
+          setMessage(
+            "Modifica non ancora salvata."
+          );
+
         };
 
 
-        const deleteButton =
-          document.createElement("button");
+      const edit =
+        document.createElement("button");
 
-        deleteButton.className = "delete";
-        deleteButton.textContent = "Elimina";
+      edit.className =
+        "small-button secondary";
 
-        deleteButton.onclick = function() {
+      edit.textContent =
+        "Modifica";
+
+
+      edit.onclick =
+        function() {
+
+          openEditor(index);
+
+        };
+
+
+      const remove =
+        document.createElement("button");
+
+      remove.className =
+        "small-button danger";
+
+      remove.textContent =
+        "Elimina";
+
+
+      remove.onclick =
+        function() {
+
+          const name =
+            song.title ||
+            "questo brano";
 
           if (
             !confirm(
               'Eliminare "' +
-              (song.title || "questa canzone") +
+              name +
               '"?'
             )
           ) {
@@ -375,24 +989,327 @@
 
           songs.splice(index, 1);
 
+          closeEditor();
+
           renderSongs();
+
+          setMessage(
+            "Brano eliminato. Premi «Salva modifiche» per confermare."
+          );
 
         };
 
 
-        row.appendChild(handle);
-        row.appendChild(title);
-        row.appendChild(status);
-        row.appendChild(toggle);
-        row.appendChild(deleteButton);
+      buttons.appendChild(toggle);
+      buttons.appendChild(edit);
+      buttons.appendChild(remove);
 
-        container.appendChild(row);
 
+      row.appendChild(handle);
+      row.appendChild(number);
+      row.appendChild(info);
+      row.appendChild(status);
+      row.appendChild(buttons);
+
+      list.appendChild(row);
+
+    });
+
+  }
+
+
+  /* =========================
+     EDITOR
+     ========================= */
+
+  function openEditor(index) {
+
+    editingIndex = index;
+
+    const song =
+      songs[index];
+
+    document.getElementById("editorTitle")
+      .textContent =
+      "Modifica brano";
+
+
+    document.getElementById("editTitle")
+      .value =
+      song.title || "";
+
+
+    document.getElementById("editArtist")
+      .value =
+      song.artist || "";
+
+
+    document.getElementById("editUrl")
+      .value =
+      song.url || "";
+
+
+    document.getElementById("editText")
+      .value =
+      song.text || "";
+
+
+    document.getElementById("editor")
+      .classList.add("active");
+
+    document.getElementById("editor")
+      .scrollIntoView({
+        behavior: "smooth",
+        block: "start"
       });
+
+  }
+
+
+  function newSong() {
+
+    editingIndex = null;
+
+    document.getElementById("editorTitle")
+      .textContent =
+      "Nuovo brano";
+
+
+    document.getElementById("editTitle")
+      .value = "";
+
+
+    document.getElementById("editArtist")
+      .value = "";
+
+
+    document.getElementById("editUrl")
+      .value = "";
+
+
+    document.getElementById("editText")
+      .value = "";
+
+
+    document.getElementById("editor")
+      .classList.add("active");
+
+
+    document.getElementById("editTitle")
+      .focus();
+
+  }
+
+
+  function applyEditor() {
+
+    const title =
+      document.getElementById("editTitle")
+        .value.trim();
+
+    const artist =
+      document.getElementById("editArtist")
+        .value.trim();
+
+    const url =
+      document.getElementById("editUrl")
+        .value.trim();
+
+    const text =
+      document.getElementById("editText")
+        .value;
+
+
+    if (!title) {
+
+      alert(
+        "Inserisci almeno il titolo del brano."
+      );
+
+      return;
 
     }
 
-  </script>
+
+    if (editingIndex === null) {
+
+      songs.push({
+        title: title,
+        artist: artist,
+        url: url,
+        text: text,
+        visible: true
+      });
+
+    } else {
+
+      songs[editingIndex].title =
+        title;
+
+      songs[editingIndex].artist =
+        artist;
+
+      songs[editingIndex].url =
+        url;
+
+      songs[editingIndex].text =
+        text;
+
+    }
+
+
+    closeEditor();
+
+    renderSongs();
+
+    setMessage(
+      "Modifica non ancora salvata."
+    );
+
+  }
+
+
+  function closeEditor() {
+
+    editingIndex = null;
+
+    document.getElementById("editor")
+      .classList.remove("active");
+
+  }
+
+
+  /* =========================
+     SAVE
+     ========================= */
+
+  async function saveSongs() {
+
+    if (!password) {
+
+      alert(
+        "La sessione non è autenticata."
+      );
+
+      return;
+
+    }
+
+
+    const message =
+      document.getElementById("message");
+
+    message.className = "";
+
+    message.textContent =
+      "Salvataggio in corso...";
+
+
+    try {
+
+      const response =
+        await fetch(API_URL, {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            action: "save",
+            password: password,
+            songs: songs
+          })
+
+        });
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok ||
+        !data.success
+      ) {
+
+        throw new Error(
+          data.error ||
+          "Errore durante il salvataggio."
+        );
+
+      }
+
+
+      message.className =
+        "success";
+
+      message.textContent =
+        "✓ Modifiche salvate correttamente.";
+
+    } catch (error) {
+
+      message.className =
+        "error";
+
+      message.textContent =
+        "Errore: " +
+        error.message;
+
+    }
+
+  }
+
+
+  /* =========================
+     MESSAGE
+     ========================= */
+
+  function setMessage(text) {
+
+    const message =
+      document.getElementById("message");
+
+    message.className = "";
+
+    message.textContent =
+      text;
+
+  }
+
+
+  /* =========================
+     ESCAPE
+     ========================= */
+
+  function escapeHtml(value) {
+
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
+  }
+
+
+  /* ENTER = LOGIN */
+
+  document
+    .getElementById("password")
+    .addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Enter") {
+          login();
+        }
+
+      }
+    );
+
+</script>
 
 </body>
 </html>
