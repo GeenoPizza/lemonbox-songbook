@@ -524,7 +524,7 @@ search.addEventListener("input", () => {
 
 });
 
-function adminLogin(){
+async function adminLogin(){
 
   const password = prompt("Password amministratore:");
 
@@ -532,15 +532,42 @@ function adminLogin(){
     return;
   }
 
-  adminPassword = password;
+  try {
 
-  listView.style.display = "none";
-  reader.style.display = "none";
-  adminPanel.style.display = "block";
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "login",
+        password: password
+      })
+    });
 
-  renderAdmin();
+    const data = await response.json();
 
-  window.scrollTo(0,0);
+    if(!response.ok || !data.success){
+      alert("Password non valida.");
+      return;
+    }
+
+    adminPassword = password;
+
+    listView.style.display = "none";
+    reader.style.display = "none";
+    adminPanel.style.display = "block";
+
+    renderAdmin();
+
+    window.scrollTo(0,0);
+
+  } catch(error) {
+
+    alert("Errore di connessione al server.");
+    console.error(error);
+
+  }
 }
 
 function exitAdmin(){
