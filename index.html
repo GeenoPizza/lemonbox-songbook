@@ -329,8 +329,8 @@ header{
   </div>
 
   <div class="nav">
-    <button onclick="previousSong()">← Precedente</button>
-    <button onclick="nextSong()">Successiva →</button>
+    <button onclick="previousSong()">← Previous</button>
+    <button onclick="nextSong()">Next →</button>
   </div>
 
 </section>
@@ -341,12 +341,10 @@ header{
 
     <h2>✏️ Modifica Songbook</h2>
 
-    <div class="adminActions">
-      <button onclick="saveChanges()">💾 Salva</button>
-      <button onclick="exitAdmin()">Esci</button>
-    </div>
-
-  </div>
+  <div class="adminActions">
+  <button id="saveButton" onclick="saveChanges()">💾 Salva</button>
+  <button onclick="exitAdmin()">Esci</button>
+</div>
 
   <div id="adminList"></div>
 
@@ -726,8 +724,11 @@ async function saveChanges(){
   }
 
   const status = document.getElementById("status");
+  const saveButton = document.getElementById("saveButton");
 
-  status.textContent = "Salvataggio...";
+  saveButton.disabled = true;
+  saveButton.textContent = "⏳ Salvataggio...";
+  status.textContent = "Salvataggio in corso...";
 
   try{
 
@@ -739,11 +740,11 @@ async function saveChanges(){
         "Content-Type":"application/json"
       },
 
-    body:JSON.stringify({
-  action:"save",
-  password:adminPassword,
-  songs:SONGS
-})
+      body:JSON.stringify({
+        action:"save",
+        password:adminPassword,
+        songs:SONGS
+      })
 
     });
 
@@ -753,15 +754,27 @@ async function saveChanges(){
       throw new Error(result.error || "Errore di salvataggio");
     }
 
+    saveButton.textContent = "✓ Salvato";
     status.textContent =
-      "✓ Salvato. La nuova versione sarà visibile a tutti tra pochi secondi.";
+      "Modifiche salvate. Attendi qualche secondo prima di uscire.";
+
+    setTimeout(() => {
+      saveButton.textContent = "💾 Salva";
+      saveButton.disabled = false;
+    }, 3000);
 
   }catch(error){
 
+    saveButton.textContent = "❌ Errore";
     status.textContent =
       "Errore: " + error.message;
 
     console.error(error);
+
+    setTimeout(() => {
+      saveButton.textContent = "💾 Salva";
+      saveButton.disabled = false;
+    }, 3000);
   }
 }
 
