@@ -25,6 +25,7 @@ header{
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:15px;
   margin-bottom:25px;
 }
 
@@ -34,8 +35,15 @@ header{
   letter-spacing:-1px;
 }
 
-.logo span{
-  color:#d7a900;
+.logo span{color:#d7a900}
+
+.adminBtn{
+  border:1px solid #d8d1c2;
+  background:white;
+  border-radius:10px;
+  padding:9px 12px;
+  cursor:pointer;
+  font-size:14px;
 }
 
 .search{
@@ -80,9 +88,7 @@ header{
   flex-shrink:0;
 }
 
-.info{
-  flex:1;
-}
+.info{flex:1}
 
 .title{
   font-size:17px;
@@ -100,9 +106,7 @@ header{
   color:#aaa;
 }
 
-.reader{
-  display:none;
-}
+.reader{display:none}
 
 .back{
   border:0;
@@ -164,6 +168,123 @@ header{
   color:#777;
 }
 
+/* ADMIN */
+
+.adminPanel{
+  display:none;
+}
+
+.adminTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:18px;
+}
+
+.adminTop h2{
+  margin:0;
+  font-size:25px;
+}
+
+.adminActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.adminActions button,
+.addBox button{
+  border:0;
+  background:#252525;
+  color:white;
+  border-radius:10px;
+  padding:11px 14px;
+  cursor:pointer;
+}
+
+.adminSong{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:white;
+  border:1px solid #ddd7ca;
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:8px;
+  cursor:grab;
+}
+
+.adminSong.dragging{
+  opacity:.45;
+}
+
+.drag{
+  font-size:20px;
+  color:#aaa;
+  cursor:grab;
+}
+
+.adminSongInfo{
+  flex:1;
+}
+
+.adminSongTitle{
+  font-weight:bold;
+}
+
+.adminSongArtist{
+  color:#777;
+  font-size:13px;
+  margin-top:3px;
+}
+
+.adminIcon{
+  border:0;
+  background:#f1eee7;
+  border-radius:8px;
+  padding:8px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.adminIcon.hidden{
+  opacity:.4;
+}
+
+.addBox{
+  background:white;
+  border:1px solid #ddd7ca;
+  border-radius:16px;
+  padding:18px;
+  margin-top:20px;
+}
+
+.addBox h3{
+  margin-top:0;
+}
+
+.addBox input,
+.addBox textarea{
+  width:100%;
+  border:1px solid #ddd7ca;
+  border-radius:9px;
+  padding:11px;
+  margin-bottom:9px;
+  font:inherit;
+}
+
+.addBox textarea{
+  min-height:180px;
+  resize:vertical;
+}
+
+.status{
+  margin-top:12px;
+  font-size:14px;
+  color:#666;
+}
+
 @media(max-width:600px){
   #app{padding:20px 12px 40px}
   .logo{font-size:24px}
@@ -178,53 +299,97 @@ header{
 
 <div id="app">
 
-  <header>
-    <div class="logo">🍋 Lemon Box <span>Songbook</span></div>
-  </header>
+<header>
+  <div class="logo">🍋 Lemon Box <span>Songbook</span></div>
+  <button class="adminBtn" onclick="adminLogin()">✏️ Modifica</button>
+</header>
 
-  <section id="listView">
-    <input
-      id="search"
-      class="search"
-      type="search"
-      placeholder="Cerca una canzone..."
-    >
+<section id="listView">
 
-    <div id="songList"></div>
-  </section>
+  <input
+    id="search"
+    class="search"
+    type="search"
+    placeholder="Cerca una canzone..."
+  >
 
-  <section id="reader" class="reader">
-    <button class="back" onclick="showList()">← Tutte le canzoni</button>
+  <div id="songList"></div>
 
-    <h1 id="readerTitle"></h1>
-    <div id="readerArtist" class="artist"></div>
+</section>
 
-    <div class="lyrics">
-      <pre id="lyricsText">Caricamento...</pre>
+<section id="reader" class="reader">
+
+  <button class="back" onclick="showList()">← Tutte le canzoni</button>
+
+  <h1 id="readerTitle"></h1>
+  <div id="readerArtist" class="artist"></div>
+
+  <div class="lyrics">
+    <pre id="lyricsText">Caricamento...</pre>
+  </div>
+
+  <div class="nav">
+    <button onclick="previousSong()">← Precedente</button>
+    <button onclick="nextSong()">Successiva →</button>
+  </div>
+
+</section>
+
+<section id="adminPanel" class="adminPanel">
+
+  <div class="adminTop">
+
+    <h2>✏️ Modifica Songbook</h2>
+
+    <div class="adminActions">
+      <button onclick="saveChanges()">💾 Salva</button>
+      <button onclick="exitAdmin()">Esci</button>
     </div>
 
-    <div class="nav">
-      <button onclick="previousSong()">← Precedente</button>
-      <button onclick="nextSong()">Successiva →</button>
-    </div>
-  </section>
+  </div>
+
+  <div id="adminList"></div>
+
+  <div class="addBox">
+
+    <h3>➕ Aggiungi canzone</h3>
+
+    <input id="newTitle" placeholder="Titolo">
+
+    <input id="newArtist" placeholder="Artista">
+
+    <textarea id="newText" placeholder="Testo della canzone"></textarea>
+
+    <button onclick="addSong()">Aggiungi canzone</button>
+
+    <div id="status" class="status"></div>
+
+  </div>
+
+</section>
 
 </div>
 
 <script>
+
+const API_URL = "https://lemonbox-songbook.vercel.app/api/update";
+
 let SONGS = [];
 let currentIndex = 0;
+let adminPassword = null;
 
 const listView = document.getElementById("listView");
 const reader = document.getElementById("reader");
+const adminPanel = document.getElementById("adminPanel");
 const songList = document.getElementById("songList");
+const adminList = document.getElementById("adminList");
 const search = document.getElementById("search");
 
 async function loadSongs(){
 
   try{
 
-    const response = await fetch("songs.json");
+    const response = await fetch("songs.json?t=" + Date.now());
 
     if(!response.ok){
       throw new Error("songs.json non disponibile");
@@ -250,7 +415,9 @@ function renderSongs(songs){
 
   songList.innerHTML = "";
 
-  if(!songs.length){
+  const visibleSongs = songs.filter(song => song.visible !== false);
+
+  if(!visibleSongs.length){
     songList.innerHTML = `
       <div class="empty">
         Nessuna canzone trovata.
@@ -259,15 +426,18 @@ function renderSongs(songs){
     return;
   }
 
-  songs.forEach((song, index)=>{
+  visibleSongs.forEach(song => {
 
     const realIndex = SONGS.indexOf(song);
 
     const el = document.createElement("div");
+
     el.className = "song";
 
     el.innerHTML = `
-      <div class="num">${String(realIndex+1).padStart(2,"0")}</div>
+      <div class="num">
+        ${String(realIndex+1).padStart(2,"0")}
+      </div>
 
       <div class="info">
         <div class="title">${escapeHTML(song.title)}</div>
@@ -277,9 +447,10 @@ function renderSongs(songs){
       <div class="arrow">›</div>
     `;
 
-    el.onclick = ()=>openSong(realIndex);
+    el.onclick = () => openSong(realIndex);
 
     songList.appendChild(el);
+
   });
 }
 
@@ -296,6 +467,7 @@ function openSong(index){
 
   listView.style.display = "none";
   reader.style.display = "block";
+  adminPanel.style.display = "none";
 
   window.scrollTo(0,0);
 }
@@ -303,6 +475,7 @@ function openSong(index){
 function showList(){
 
   reader.style.display = "none";
+  adminPanel.style.display = "none";
   listView.style.display = "block";
 
   window.scrollTo(0,0);
@@ -310,19 +483,35 @@ function showList(){
 
 function nextSong(){
 
-  if(currentIndex < SONGS.length - 1){
-    openSong(currentIndex + 1);
+  let i = currentIndex + 1;
+
+  while(i < SONGS.length){
+
+    if(SONGS[i].visible !== false){
+      openSong(i);
+      return;
+    }
+
+    i++;
   }
 }
 
 function previousSong(){
 
-  if(currentIndex > 0){
-    openSong(currentIndex - 1);
+  let i = currentIndex - 1;
+
+  while(i >= 0){
+
+    if(SONGS[i].visible !== false){
+      openSong(i);
+      return;
+    }
+
+    i--;
   }
 }
 
-search.addEventListener("input", ()=>{
+search.addEventListener("input", () => {
 
   const q = search.value.toLowerCase().trim();
 
@@ -332,7 +521,221 @@ search.addEventListener("input", ()=>{
       (song.artist || "").toLowerCase().includes(q)
     )
   );
+
 });
+
+function adminLogin(){
+
+  const password = prompt("Password amministratore:");
+
+  if(!password){
+    return;
+  }
+
+  adminPassword = password;
+
+  listView.style.display = "none";
+  reader.style.display = "none";
+  adminPanel.style.display = "block";
+
+  renderAdmin();
+
+  window.scrollTo(0,0);
+}
+
+function exitAdmin(){
+
+  adminPassword = null;
+
+  adminPanel.style.display = "none";
+  listView.style.display = "block";
+
+  renderSongs(SONGS);
+
+  window.scrollTo(0,0);
+}
+
+function renderAdmin(){
+
+  adminList.innerHTML = "";
+
+  SONGS.forEach((song,index)=>{
+
+    const el = document.createElement("div");
+
+    el.className = "adminSong";
+    el.draggable = true;
+    el.dataset.index = index;
+
+    el.innerHTML = `
+
+      <div class="drag">☰</div>
+
+      <div class="adminSongInfo">
+        <div class="adminSongTitle">
+          ${escapeHTML(song.title)}
+        </div>
+
+        <div class="adminSongArtist">
+          ${escapeHTML(song.artist || "")}
+        </div>
+      </div>
+
+      <button
+        class="adminIcon ${song.visible === false ? "hidden" : ""}"
+        title="Mostra/nascondi"
+        onclick="toggleVisibility(${index})">
+        ${song.visible === false ? "🙈" : "👁️"}
+      </button>
+
+      <button
+        class="adminIcon"
+        title="Elimina"
+        onclick="deleteSong(${index})">
+        🗑️
+      </button>
+    `;
+
+    el.addEventListener("dragstart", () => {
+      el.classList.add("dragging");
+    });
+
+    el.addEventListener("dragend", () => {
+      el.classList.remove("dragging");
+      updateOrder();
+    });
+
+    el.addEventListener("dragover", e => {
+      e.preventDefault();
+
+      const dragging = adminList.querySelector(".dragging");
+
+      if(!dragging || dragging === el){
+        return;
+      }
+
+      const rect = el.getBoundingClientRect();
+      const after = e.clientY > rect.top + rect.height / 2;
+
+      if(after){
+        el.after(dragging);
+      }else{
+        el.before(dragging);
+      }
+    });
+
+    adminList.appendChild(el);
+
+  });
+}
+
+function updateOrder(){
+
+  const elements = [...adminList.children];
+
+  const reordered = elements.map(el =>
+    SONGS[Number(el.dataset.index)]
+  );
+
+  SONGS = reordered;
+
+  renderAdmin();
+}
+
+function toggleVisibility(index){
+
+  SONGS[index].visible = SONGS[index].visible === false;
+
+  renderAdmin();
+}
+
+function deleteSong(index){
+
+  const song = SONGS[index];
+
+  if(!confirm(`Eliminare "${song.title}" dal Songbook?`)){
+    return;
+  }
+
+  SONGS.splice(index,1);
+
+  renderAdmin();
+}
+
+function addSong(){
+
+  const title = document.getElementById("newTitle").value.trim();
+  const artist = document.getElementById("newArtist").value.trim();
+  const text = document.getElementById("newText").value.trim();
+
+  if(!title){
+    alert("Inserisci almeno il titolo.");
+    return;
+  }
+
+  SONGS.push({
+    title,
+    artist,
+    text,
+    url:"",
+    visible:true
+  });
+
+  document.getElementById("newTitle").value = "";
+  document.getElementById("newArtist").value = "";
+  document.getElementById("newText").value = "";
+
+  renderAdmin();
+
+  document.getElementById("status").textContent =
+    "Canzone aggiunta. Ricordati di premere Salva.";
+}
+
+async function saveChanges(){
+
+  if(!adminPassword){
+    alert("Sessione amministratore non valida.");
+    return;
+  }
+
+  const status = document.getElementById("status");
+
+  status.textContent = "Salvataggio...";
+
+  try{
+
+    const response = await fetch(API_URL,{
+
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+        password:adminPassword,
+        songs:SONGS
+      })
+
+    });
+
+    const result = await response.json();
+
+    if(!response.ok){
+      throw new Error(result.error || "Errore di salvataggio");
+    }
+
+    status.textContent =
+      "✓ Salvato. La nuova versione sarà visibile a tutti tra pochi secondi.";
+
+  }catch(error){
+
+    status.textContent =
+      "Errore: " + error.message;
+
+    console.error(error);
+  }
+}
 
 function escapeHTML(str){
 
@@ -345,6 +748,7 @@ function escapeHTML(str){
 }
 
 loadSongs();
+
 </script>
 
 </body>
