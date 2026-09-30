@@ -49,11 +49,6 @@
       margin-bottom: 8px;
       background: #242424;
       border-radius: 10px;
-      cursor: grab;
-    }
-
-    .song:active {
-      cursor: grabbing;
     }
 
     .handle {
@@ -138,159 +133,83 @@
   </div>
 
   <script>
-
     const SONGS_URL =
       "https://raw.githubusercontent.com/GeenoPizza/lemonbox-songbook/main/songs.json";
 
-    let songs = [];
-
     async function loadSongs() {
-
-      const response = await fetch(
-        SONGS_URL + "?t=" + Date.now(),
-        {
-          cache: "no-store"
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Impossibile caricare songs.json");
-      }
-
-      songs = await response.json();
-
-      renderSongs();
-    }
-
-
-    function renderSongs() {
-
       const container = document.getElementById("songList");
 
-      container.innerHTML = "";
+      try {
+        const response = await fetch(SONGS_URL);
 
-      songs.forEach((song, index) => {
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status);
+        }
 
-        const row = document.createElement("div");
+        const songs = await response.json();
 
-        row.className = "song";
+        if (!Array.isArray(songs) || songs.length === 0) {
+          container.innerHTML =
+            '<div class="empty">Nessuna canzone trovata.</div>';
+          return;
+        }
 
-        row.draggable = true;
+        container.innerHTML = "";
 
-        row.dataset.index = index;
+        songs.forEach(function(song) {
 
-        row.innerHTML = `
-          <div class="handle">☰</div>
+          const row = document.createElement("div");
+          row.className = "song";
 
-          <div class="song-title">
-            ${escapeHtml(song.title || "Senza titolo")}
-          </div>
+          const handle = document.createElement("div");
+          handle.className = "handle";
+          handle.textContent = "☰";
 
-          <div class="status ${song.visible === false ? "hidden" : ""}">
-            ${song.visible === false ? "Nascosta" : "Visibile"}
-          </div>
+          const title = document.createElement("div");
+          title.className = "song-title";
+          title.textContent =
+            song.title || "Senza titolo";
 
-          <button class="toggle">
-            ${song.visible === false ? "Mostra" : "Nascondi"}
-          </button>
+          const status = document.createElement("div");
+          status.className = "status";
 
-          <button class="delete">
-            Elimina
-          </button>
-        `;
-
-        row.querySelector(".toggle").onclick = () => {
-
-          song.visible = song.visible === false;
-
-          renderSongs();
-
-        };
-
-        row.querySelector(".delete").onclick = () => {
-
-          if (!confirm(
-            `Eliminare "${song.title}"?`
-          )) {
-            return;
+          if (song.visible === false) {
+            status.className = "status hidden";
+            status.textContent = "Nascosta";
+          } else {
+            status.textContent = "Visibile";
           }
 
-          songs.splice(index, 1);
+          const toggle = document.createElement("button");
+          toggle.className = "toggle";
+          toggle.textContent =
+            song.visible === false ? "Mostra" : "Nascondi";
 
-          renderSongs();
+          const deleteButton = document.createElement("button");
+          deleteButton.className = "delete";
+          deleteButton.textContent = "Elimina";
 
-        };
+          row.appendChild(handle);
+          row.appendChild(title);
+          row.appendChild(status);
+          row.appendChild(toggle);
+          row.appendChild(deleteButton);
 
-
-        row.addEventListener("dragstart", () => {
-
-          row.classList.add("dragging");
-
+          container.appendChild(row);
         });
 
+      } catch (error) {
 
-        row.addEventListener("dragend", () => {
+        container.innerHTML =
+          '<div class="empty">' +
+          'Errore nel caricamento: ' +
+          error.message +
+          '</div>';
 
-          row.classList.remove("dragging");
-
-        });
-
-
-        row.addEventListener("dragover", event => {
-
-          event.preventDefault();
-
-          const dragging =
-            document.querySelector(".dragging");
-
-          if (!dragging || dragging === row) {
-            return;
-          }
-
-          const from =
-            Number(dragging.dataset.index);
-
-          const to =
-            Number(row.dataset.index);
-
-          const moved =
-            songs.splice(from, 1)[0];
-
-          songs.splice(to, 0, moved);
-
-          renderSongs();
-
-        });
-
-
-        container.appendChild(row);
-
-      });
-
+      }
     }
 
-
-    function escapeHtml(value) {
-
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-
-    }
-
-
-    loadSongs().catch(error => {
-
-      document.getElementById("songList").innerHTML =
-        `<div class="empty">
-          Errore: ${escapeHtml(error.message)}
-        </div>`;
-
-    });
-
+    loadSongs();
   </script>
 
 </body>
