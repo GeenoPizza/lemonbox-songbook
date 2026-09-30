@@ -739,10 +739,11 @@ async function saveChanges(){
         "Content-Type":"application/json"
       },
 
-      body:JSON.stringify({
-        password:adminPassword,
-        songs:SONGS
-      })
+    body:JSON.stringify({
+  action:"save",
+  password:adminPassword,
+  songs:SONGS
+})
 
     });
 
