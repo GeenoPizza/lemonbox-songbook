@@ -148,14 +148,9 @@ function render(){const q=search.value.trim().toLowerCase();list.innerHTML='';le
 function details(){if(!songs.length)return;const s=songs[selected];document.getElementById('trackname').textContent=s.title||'Senza titolo';document.getElementById('trackartist').textContent=s.artist||'Lemon Box medley';document.getElementById('artistdetail').textContent=s.artist||'Medley';document.getElementById('keydetail').textContent='';document.getElementById('textdetail').textContent=s.text?'Testo disponibile':'Testo non disponibile';document.getElementById('lyricsstatus').textContent=s.text?'LYRICS VIEW':'NO LYRICS';document.getElementById('lyricsbody').textContent=s.text||'Testo non disponibile per questo brano.';document.getElementById('note').textContent='Songbook aggiornato automaticamente dai dati Lemon Box.'}
 function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 async function loadSongs(){try{const songsUrl=new URL('../songs.json',window.location.href);songsUrl.searchParams.set('t',Date.now());const response=await fetch(songsUrl.href,{cache:'no-store'});if(!response.ok)throw new Error('songs.json non disponibile');const data=await response.json();if(!Array.isArray(data))throw new Error('Formato del songbook non valido');songs=data.filter(s=>s.visible!==false);const size=Math.ceil(songs.length/4);groups=[{label:'01 / OPENING',start:0,end:size},{label:'02 / MID-SET',start:size,end:size*2},{label:'03 / LATE 90s → 00s',start:size*2,end:size*3},{label:'04 / MEDLEYS & FINALE',start:size*3,end:songs.length}];selected=0;render();details()}catch(error){list.innerHTML='<div class="empty">Impossibile caricare il Songbook. Riprova tra poco.</div>';document.getElementById('lyricsstatus').textContent='CONNECTION ERROR';console.error(error)}}
-search.addEventListener('input',render);loadSongs();window.addEventListener('pageshow',()=>{if(!songs.length)loadSongs()});
+search.addEventListener('input',render);
 </script>
-<script>
-// Tonalità is internal set-list information: never expose it in search or song details.
-document.getElementById('search').placeholder='cerca titolo o artista...';
-render=function(){const q=search.value.trim().toLowerCase();list.innerHTML='';let shown=0;groups.forEach(g=>{const matching=songs.map((s,i)=>({...s,i})).slice(g.start,g.end).filter(s=>s.visible!==false&&`${s.title} ${s.artist}`.toLowerCase().includes(q));if(!matching.length)return;const label=document.createElement('div');label.className='group-label';label.textContent=g.label;list.append(label);matching.forEach(s=>{shown++;const b=document.createElement('button');b.className='song'+(s.i===selected?' active':'');b.innerHTML=`<span class="num">${String(s.i+1).padStart(2,'0')}</span><span class="songtitle">${escapeHtml(s.title)}<span class="artist">${escapeHtml(s.artist||'Instrumental / medley')}</span></span>`;b.addEventListener('click',()=>{selected=s.i;render();details()});list.append(b)})});document.getElementById('count').textContent=`${shown} / ${songs.length} TRACKS`;if(!shown){const e=document.createElement('div');e.className='empty';e.textContent='Nessun brano trovato.';list.append(e)}};
-render();
-</script>
+
 <script>
 // Build separate classic-style windows and real control buttons.
 (()=>{
@@ -177,5 +172,8 @@ render();
  const tools=document.createElement('div');tools.className='wa-tools';tools.innerHTML='<span class="wa-led">STEREO</span><span>SHUF</span><span>REP</span><span>EQ</span><span>PL</span>';
  player.append(tools);
  layout.replaceChildren(playerWindow,lyricsWindow,playlistWindow);
+ // Initialize only after the final Winamp layout exists, so the first render targets the visible playlist and lyrics panel.
+ loadSongs();
+ window.addEventListener('pageshow',()=>{if(!songs.length)loadSongs()});
 })();
 </script></body></html>
