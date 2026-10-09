@@ -131,6 +131,39 @@ body,#app{background:#303030!important;color:#ddd!important;font:11px Tahoma,Ver
 @media(max-width:1050px){.layout{grid-template-columns:255px minmax(300px,1fr)!important;grid-template-areas:'player playlist' 'lyrics lyrics'!important}.winamp-playlist .songlist{max-height:360px}.winamp-lyrics .lyricsbody{min-height:55vh;max-height:none}}
 @media(max-width:650px){.wrap{margin:6px auto!important;padding:0 4px!important}.layout{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:'player' 'lyrics' 'playlist'!important}.winamp-playlist .songlist{max-height:280px}.winamp-lyrics .lyricsbody{min-height:55vh;max-height:none;padding:22px 16px;font-size:17px}}
 </style>
+<style>
+/* Lemon Box identity + consistent reading order: player, playlist, lyrics. */
+.masthead,.topline,.ticker,.footer{display:initial!important}
+.topline{display:flex!important;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 8px;padding:0 2px 7px;border-bottom:1px solid #4c5b48;color:#a7b7a0;font:10px 'Courier New',monospace;letter-spacing:1px}
+.masthead{display:flex!important;flex-direction:column;align-items:flex-start;gap:5px;height:auto!important;min-height:0;margin:0 0 8px!important;padding:16px 18px!important;position:relative;background:linear-gradient(115deg,#111b12 0%,#202c20 68%,#2d3b25 100%)!important;border:1px solid #7fa84a!important;border-left:5px solid #baff35!important;box-shadow:3px 3px 0 #151515!important;color:#f2ffe9!important}
+.masthead:before{content:'LIVE SET / OFFICIAL SONGBOOK';display:block;margin:0 0 3px;color:#baff35;font:bold 9px 'Courier New',monospace;letter-spacing:2px}
+.masthead:after{content:'♫  L B  ♫';right:16px;top:50%;bottom:auto;transform:translateY(-50%);color:#42563a;font:bold 26px 'Courier New',monospace;letter-spacing:2px}
+.eyebrow{display:block!important;color:#baff35!important;font:bold 9px 'Courier New',monospace;letter-spacing:2px}
+.brand{font:bold clamp(25px,4vw,38px) Tahoma,Verdana,sans-serif!important;letter-spacing:1px!important;color:#f4ffe9!important;text-shadow:2px 2px #477b2c!important}
+.brand span{color:#baff35!important}
+.tagline{display:block!important;margin:2px 0 0!important;color:#b5c6ac!important;font:10px 'Courier New',monospace!important;letter-spacing:.5px}
+.ticker{display:block!important;margin:0 0 8px!important;padding:4px 0!important;background:#111!important;border-block:1px solid #3d5133!important;font-size:9px!important}
+.layout{grid-template-columns:minmax(245px,0.78fr) minmax(0,1.55fr)!important;grid-template-areas:'player lyrics' 'playlist lyrics'!important;gap:6px!important;align-items:start!important}
+.winamp-player{grid-area:player!important}
+.winamp-playlist{grid-area:playlist!important}
+.winamp-lyrics{grid-area:lyrics!important}
+.winamp-playlist .songlist{max-height:calc(100vh - 250px)!important}
+.footer{display:flex!important;margin-top:12px!important;padding-top:8px!important}
+@media(max-width:760px){
+ .wrap{margin:6px auto!important;padding:0 5px!important}
+ .topline{font-size:9px}
+ .masthead{padding:13px 14px!important}
+ .masthead:after{right:10px;font-size:20px}
+ .brand{font-size:28px!important}
+ .tagline{max-width:85%;font-size:9px!important}
+ .ticker{display:block!important}
+ .layout{grid-template-columns:minmax(0,1fr)!important;grid-template-areas:'player' 'playlist' 'lyrics'!important}
+ .winamp-player,.winamp-playlist,.winamp-lyrics{grid-column:1!important}
+ .winamp-playlist .songlist{max-height:280px!important}
+ .winamp-lyrics .lyricsbody{min-height:50vh!important}
+}
+</style>
+
 </head>
 <body><main id="app"><div class="wrap">
 <div class="topline"><span>LEMON BOX // DIGITAL SONGBOOK</span><span>EST. Y2K · LIVE SET EDITION <span class="blink">■</span></span></div>
