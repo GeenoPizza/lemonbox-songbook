@@ -5,34 +5,59 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Un regalo per Lara &amp; Marc | Lemon Box</title>
 <style>
-:root{color-scheme:dark;--bg:#101512;--panel:#1a211d;--lime:#baff35;--text:#eff5e9;--muted:#a8b7a8}
+:root{color-scheme:dark;--panel:#1a211d;--lime:#baff35;--text:#eff5e9;--muted:#a8b7a8}
 *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at top,#263629,#101512 65%);font:16px/1.6 Arial,sans-serif;color:var(--text)}
-main{width:min(100%,520px);padding:clamp(24px,6vw,44px);background:var(--panel);border:1px solid #50624c;box-shadow:8px 8px 0 #080b09;text-align:center}
-.kicker{font:11px 'Courier New',monospace;letter-spacing:3px;color:var(--lime)}h1{font-size:clamp(32px,8vw,48px);line-height:1.05;margin:14px 0}p{color:var(--muted)}.heart{color:var(--lime)}a,button{display:block;width:100%;padding:13px 16px;margin-top:12px;border:1px solid var(--lime);background:var(--lime);color:#11180d;text-decoration:none;font-weight:bold;cursor:pointer}a.secondary{background:transparent;color:var(--lime)}input{width:100%;padding:13px;margin-top:8px;background:#080b09;border:1px solid #52634e;color:white;font-size:16px}#download,#error{display:none}small{display:block;margin-top:22px;color:#718071}
+main{width:min(100%,540px);padding:clamp(24px,6vw,44px);background:var(--panel);border:1px solid #50624c;box-shadow:8px 8px 0 #080b09;text-align:center}
+.kicker{font:11px 'Courier New',monospace;letter-spacing:3px;color:var(--lime)}h1{font-size:clamp(32px,8vw,48px);line-height:1.05;margin:14px 0}p{color:var(--muted)}.heart{color:var(--lime)}a,button{display:block;width:100%;padding:13px 16px;margin-top:12px;border:1px solid var(--lime);background:var(--lime);color:#11180d;text-decoration:none;font-weight:bold;cursor:pointer;font-size:14px}a.secondary{background:transparent;color:var(--lime)}.password-wrap{display:flex;gap:6px;margin-top:8px}.password-wrap input{flex:1;min-width:0;width:100%;padding:13px;background:#080b09;border:1px solid #52634e;color:white;font-size:16px}.password-wrap button{width:auto;min-width:58px;margin:0;padding:10px;background:#303b32;color:var(--lime);border-color:#52634e}#download,#error,#download-status{display:none}#download-status{padding:12px;margin-top:12px;border:1px solid #52634e;background:#101512;color:var(--lime);font-size:14px}small{display:block;margin-top:22px;color:#718071}.lang{border-top:1px dashed #52634e;margin-top:18px;padding-top:5px}.lang p{margin:12px 0}
 </style>
 </head>
 <body>
 <main>
-<div class="kicker">LEMON BOX · UN PICCOLO REGALO</div>
+<div class="kicker">LEMON BOX · A LITTLE GIFT / UN PICCOLO REGALO</div>
 <h1>Per Lara <span class="heart">&amp;</span> Marc</h1>
+<div class="lang">
 <p>Abbiamo registrato una canzone per voi. E visto che le cose belle sono più belle quando si condividono, abbiamo pensato di regalarla anche a chi ha festeggiato con voi.</p>
-<a class="secondary" href="https://www.instagram.com/lemonboxmusic/" target="_blank" rel="noopener noreferrer">Seguite Lemon Box su Instagram ↗</a>
-<p>Inserite la password per sbloccare il download.</p>
+<p>We recorded a song just for you. And because good things are even better when shared, we wanted to give it to everyone who celebrated with you, too.</p>
+</div>
+<a class="secondary" href="https://www.instagram.com/lemonboxmusic/" target="_blank" rel="noopener noreferrer">Seguiteci su Instagram · Follow us on Instagram ↗</a>
+<div class="lang">
+<p>Inserite la password per sbloccare la canzone.</p>
+<p>Enter the password to unlock your song.</p>
+</div>
 <form id="gate">
+<div class="password-wrap">
 <input id="password" type="password" placeholder="Password" autocomplete="off" aria-label="Password" required>
-<button type="submit">SBLOCCA IL REGALO</button>
+<button id="toggle-password" type="button" aria-label="Mostra password" aria-pressed="false">👁</button>
+</div>
+<button type="submit">SBLOCCA IL REGALO · UNLOCK YOUR GIFT</button>
 </form>
-<p id="error" role="alert">Password non corretta. Riprova.</p>
-<a id="download" href="https://drive.google.com/uc?export=download&amp;id=1wY0wY9ugJdQvVkWksEgq1zjjsXzwJINR" target="_blank" rel="noopener noreferrer">SCARICA LA CANZONE 🎵</a>
-<small>Con affetto,<br><strong>LEMON BOX</strong></small>
+<p id="error" role="alert">Password non corretta. Riprova.<br>Incorrect password. Please try again.</p>
+<a id="download" href="https://drive.google.com/uc?export=download&amp;id=1wY0wY9ugJdQvVkWksEgq1zjjsXzwJINR" target="_blank" rel="noopener noreferrer">SCARICA LA CANZONE · DOWNLOAD THE SONG 🎵</a>
+<div id="download-status" role="status" aria-live="polite"></div>
+<small>Con affetto · With love,<br><strong>LEMON BOX</strong></small>
 </main>
 <script>
+const passwordInput=document.getElementById('password');
+const toggleButton=document.getElementById('toggle-password');
+toggleButton.addEventListener('click',function(){
+ const show=passwordInput.type==='password';
+ passwordInput.type=show?'text':'password';
+ toggleButton.textContent=show?'🙈':'👁';
+ toggleButton.setAttribute('aria-label',show?'Nascondi password':'Mostra password');
+ toggleButton.setAttribute('aria-pressed',String(show));
+});
 document.getElementById('gate').addEventListener('submit',function(event){
  event.preventDefault();
- const valid=document.getElementById('password').value==='laraandmarc';
+ const valid=passwordInput.value==='laraandmarc';
  document.getElementById('download').style.display=valid?'block':'none';
  document.getElementById('error').style.display=valid?'none':'block';
+ document.getElementById('download-status').style.display='none';
  if(valid) document.getElementById('download').focus();
+});
+document.getElementById('download').addEventListener('click',function(){
+ const status=document.getElementById('download-status');
+ status.style.display='block';
+ status.textContent='Download in partenza… / Your download is starting… Attendi qualche secondo: il telefono potrebbe mostrare la notifica di download solo quando il file è pronto. / Please wait a few seconds; your phone may show the download notification once the file is ready.';
 });
 </script>
 </body>
