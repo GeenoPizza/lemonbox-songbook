@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101416">
+<title>Votazione setlist · 25 brani</title>
+<style>
+:root{color-scheme:dark;--bg:#101416;--panel:#1a2225;--line:#344247;--muted:#aab8bc;--accent:#45c49a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#f3f6f5;font:16px/1.45 system-ui,-apple-system,Segoe UI,sans-serif}
+main{max-width:760px;margin:auto;padding:22px 16px 48px}
+h1{font-size:27px;line-height:1.15;margin:8px 0}
+p{color:var(--muted);margin:8px 0 18px}
+.sticky{position:sticky;top:0;background:#101416ee;backdrop-filter:blur(10px);padding:12px 0;z-index:2;border-bottom:1px solid var(--line)}
+.counter{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.track{height:8px;background:#344247;border-radius:10px;margin-top:9px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);transition:width .15s}
+section{margin:22px 0}
+h2{font-size:17px;letter-spacing:.04em;margin:0 0 9px;color:#8fe0c2}
+.song{display:flex;align-items:flex-start;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;margin:7px 0;cursor:pointer}
+.song input{width:21px;height:21px;flex:0 0 21px;accent-color:var(--accent);margin:1px 0 0}
+.song:has(input:checked){border-color:var(--accent);background:#1c302c}
+.song:has(input:disabled){opacity:.45}
+.note{font-size:12px;color:var(--muted);display:block;margin-top:2px}
+.actions{display:grid;gap:9px;margin-top:24px}
+button{border:0;border-radius:10px;padding:14px 16px;font-size:16px;font-weight:700;cursor:pointer}
+.primary{background:var(--accent);color:#07130f}
+.secondary{background:#293539;color:#f3f6f5;border:1px solid var(--line)}
+#status{min-height:24px;color:#8fe0c2;font-size:14px}
+#voteText{display:none;width:100%;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:#f3f6f5;font:14px/1.5 system-ui;resize:vertical}
+.small{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<h1>Votazione nuova setlist</h1>
+<p>Seleziona <strong>esattamente 25 brani</strong> tra quelli proposti. Puoi cambiare idea finché non condividi il voto.</p>
+<div class="sticky">
+  <div class="counter"><span>Brani selezionati</span><span id="count">0 / 25</span></div>
+  <div class="track"><div class="fill" id="fill"></div></div>
+</div>
+<div id="songs"></div>
+<div class="actions">
+<button class="primary" id="send">INVIA / CONDIVIDI IL VOTO</button>
+<button class="secondary" id="reset">Azzera selezione</button>
+<div id="status" aria-live="polite"></div>
+<textarea id="voteText" rows="12" readonly aria-label="Testo del voto"></textarea>
+<button class="secondary" id="share" style="display:none">CONDIVIDI DI NUOVO</button>
+<p class="small">Dopo aver preparato il voto, condividilo nella chat WhatsApp della band. La pagina non richiede login né autorizzazioni.</p>
+</div>
+</main>
+<script>
+const groups = [
+["ROCK",[
+"Sk8er Boi – Avril Lavigne","All the Small Things – Blink-182","Numb – Linkin Park","In the End – Linkin Park","I Believe in a Thing Called Love – The Darkness","It's My Life – Bon Jovi","Black or White – Michael Jackson"]],
+["SUPER HITS",[
+"A Thousand Miles – Vanessa Carlton","Torn – Natalie Imbruglia","You Get What You Give – New Radicals","Unwritten – Natasha Bedingfield","Where Is the Love? – Black Eyed Peas","MMMBop – Hanson","Crazy in Love – Beyoncé","Rock DJ – Robbie Williams","Don't Speak – No Doubt (già in repertorio)"]],
+["DANCEABLE POP HITS",[
+"Can't Get You Out of My Head – Kylie Minogue","I'm Outta Love – Anastacia","It's Raining Men – Geri Halliwell","Murder on the Dancefloor – Sophie Ellis-Bextor","Let's Get Loud – Jennifer Lopez","Move Your Feet – Junior Senior"]],
+["BOYBANDS, GIRLBANDS & POP QUEENS",[
+"Everybody (Backstreet's Back) – Backstreet Boys","I Want It That Way – Backstreet Boys","Bye Bye Bye – *NSYNC","Wannabe – Spice Girls","Say You'll Be There – Spice Girls","No Scrubs – TLC","...Baby One More Time – Britney Spears","Oops!... I Did It Again – Britney Spears","Lady Marmalade – Christina Aguilera, Lil' Kim, Mýa & P!nk","Bootylicious – Destiny's Child"]],
+["HIP-HOP & RAP",[
+"Lose Yourself – Eminem","Dilemma – Nelly feat. Kelly Rowland"]],
+["SINGER-SONGWRITER & POP ROCK",[
+"Fallin' – Alicia Keys","Complicated – Avril Lavigne","She Will Be Loved – Maroon 5","This Love – Maroon 5","Chasing Cars – Snow Patrol","Wonderwall – Oasis","Ironic – Alanis Morissette","Man! I Feel Like a Woman! – Shania Twain"]]
+];
+const root=document.getElementById('songs');
+groups.forEach(([name,songs])=>{
+ const sec=document.createElement('section');
+ const h=document.createElement('h2');h.textContent=name;sec.append(h);
+ songs.forEach(song=>{
+  const label=document.createElement('label');label.className='song';
+  const input=document.createElement('input');input.type='checkbox';input.value=song;
+  input.addEventListener('change',update);
+  const span=document.createElement('span');span.textContent=song;
+  if(song.includes('già in repertorio')){const note=document.createElement('small');note.className='note';note.textContent='Già in repertorio';span.append(note)}
+  label.append(input,span);sec.append(label);
+ });
+ root.append(sec);
+});
+function selected(){return [...document.querySelectorAll('input[type=checkbox]:checked')]}
+function update(){
+ const checks=[...document.querySelectorAll('input[type=checkbox]')], chosen=selected();
+ document.getElementById('count').textContent=chosen.length+' / 25';
+ document.getElementById('fill').style.width=Math.min(chosen.length/25*100,100)+'%';
+ checks.forEach(c=>{c.disabled=chosen.length>=25&&!c.checked});
+ document.getElementById('status').textContent=chosen.length===25?'Hai selezionato tutti i 25 brani.':'';
+}
+async function shareVote(){
+ const chosen=selected(),status=document.getElementById('status'),area=document.getElementById('voteText');
+ if(chosen.length!==25){status.textContent='Devi selezionare esattamente 25 brani. Al momento sono '+chosen.length+'.';return}
+ const msg='IL MIO VOTO PER LA SETLIST (25 brani)\n\n'+chosen.map((c,i)=>(i+1)+'. '+c.value).join('\n');
+ area.value=msg;area.style.display='block';document.getElementById('share').style.display='block';
+ if(navigator.share){
+  try{await navigator.share({title:'Il mio voto per la setlist',text:msg});status.textContent='Condivisione aperta.';return}catch(e){if(e.name==='AbortError'){status.textContent='Condivisione annullata.';return}}
+ }
+ try{
+  if(navigator.clipboard && window.isSecureContext){await navigator.clipboard.writeText(msg);status.textContent='Voto copiato. Incollalo nella chat WhatsApp della band.';}
+  else{area.focus();area.select();status.textContent='Testo pronto: tieni premuto sul testo e scegli Copia, poi incollalo su WhatsApp.';}
+ }catch(e){area.focus();area.select();status.textContent='Testo pronto: tieni premuto sul testo e scegli Copia, poi incollalo su WhatsApp.';}
+}
+document.getElementById('send').addEventListener('click',shareVote);
+document.getElementById('share').addEventListener('click',shareVote);
+document.getElementById('reset').addEventListener('click',()=>{
+ document.querySelectorAll('input[type=checkbox]').forEach(c=>{c.checked=false;c.disabled=false});
+ document.getElementById('voteText').style.display='none';document.getElementById('share').style.display='none';
+ update();document.getElementById('status').textContent='Selezione azzerata.';
+});
+</script>
+</body>
+</html>
